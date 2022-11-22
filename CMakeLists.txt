@@ -1,4 +1,4 @@
-# Copyright (c) 2020-2021, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# Copyright (c) 2020-2022, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -198,6 +198,14 @@ if(${TRITON_ENABLE_GPU})
   find_package(CUDAToolkit REQUIRED)
 endif() # TRITON_ENABLE_GPU
 
+if (NOT WIN32)
+  # Gperftools
+  #
+  link_directories(/usr/local/lib)
+  LIST(APPEND CMAKE_MODULE_PATH "${repo-common_SOURCE_DIR}/cmake")
+  find_package(Gperftools REQUIRED)
+endif()
+
 #
 # Shared library implementing the Triton Backend API
 #
@@ -222,6 +230,13 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${TRITON_ONNXRUNTIME_INCLUDE_PATHS}
 )
+
+if (NOT WIN32)
+  target_include_directories(
+    triton-onnxruntime-backend
+    PRIVATE ${GPERFTOOLS_INCLUDE_DIR}
+  )
+endif()
 
 target_compile_features(triton-onnxruntime-backend PRIVATE cxx_std_11)
 target_compile_options(
