@@ -53,9 +53,10 @@ def dockerfile_common():
     df = '''
 ARG BASE_IMAGE={}
 ARG ONNXRUNTIME_VERSION={}
-ARG ONNXRUNTIME_REPO=https://github.com/microsoft/onnxruntime
+ARG ONNXRUNTIME_REPO=https://github.com/cliffwoolley/onnxruntime
 ARG ONNXRUNTIME_BUILD_CONFIG={}
-'''.format(FLAGS.triton_container, FLAGS.ort_version, FLAGS.ort_build_config)
+'''.format(FLAGS.triton_container, 'jwoolley-patch-cuda12', FLAGS.ort_build_config)
+#'''.format(FLAGS.triton_container, FLAGS.ort_version, FLAGS.ort_build_config)
 
     if FLAGS.ort_openvino is not None:
         df += '''
@@ -187,7 +188,7 @@ RUN wget ${INTEL_COMPUTE_RUNTIME_URL}/intel-gmmlib_19.3.2_amd64.deb && \
     ARG ONNXRUNTIME_REPO
     ARG ONNXRUNTIME_BUILD_CONFIG
 
-    RUN git clone -b rel-${ONNXRUNTIME_VERSION} --recursive ${ONNXRUNTIME_REPO} onnxruntime && \
+    RUN git clone -b ${ONNXRUNTIME_VERSION} --recursive ${ONNXRUNTIME_REPO} onnxruntime && \
         (cd onnxruntime && git submodule update --init --recursive)
 
         '''
